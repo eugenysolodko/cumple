@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cuenta atrás para el cumple 🎉</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #111, #222);
+      color: #fff;
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      padding: 100px 20px;
+    }
+    h1 { font-size: 2.5em; margin-bottom: 20px; }
+    #countdown { font-size: 2em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🎂 ¡Cumple de Eugeny en camino!</h1>
+  <div id="countdown"></div>
+  <script>
+    const target = new Date("2025-12-20T20:00:00").getTime(); // cambia la fecha si quieres
+    const el = document.getElementById("countdown");
+    setInterval(() => {
+      const diff = target - new Date().getTime();
+      if (diff <= 0) { el.textContent = "🎉 ¡Ya empezó la fiesta!"; return; }
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / (1000 * 60)) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+      el.textContent = `${d}d ${h}h ${m}m ${s}s`;
+    }, 1000);
+  </script>
+</body>
+</html>
