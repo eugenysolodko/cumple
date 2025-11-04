@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>it's coming — 22·11·2025 12:00</title>
+<title>Autumn · Barcelona · Eu’s 35</title>
 <style>
   :root{
-    --bg1:#0b1020; --bg2:#13264e; --sun:#ffd27a; --leaf:#34d399; --fg:#fff; --muted:#e7f5ffcc;
+    --bg1:#0b1020; --bg2:#13264e; --sun:#ffd27a; --leaf:#34d399;
+    --fg:#fff; --muted:#e7f5ffcc; --glass:rgba(255,255,255,.08);
   }
   *{box-sizing:border-box} html,body{height:100%}
   body{
@@ -20,38 +21,57 @@
     position:fixed; width:52vmin; height:52vmin; border-radius:50%;
     background:radial-gradient(ellipse at 50% 60%, var(--sun) 0%, #ff9f1a 55%, transparent 60%);
     top:6%; left:50%; transform:translateX(-50%); filter:blur(0.3px) saturate(120%);
-    animation:pulse 6s ease-in-out infinite;
-    opacity:.9;
+    animation:pulse 6s ease-in-out infinite; opacity:.9; z-index:0;
   }
   @keyframes pulse { 0%,100%{transform:translateX(-50%) scale(1)} 50%{transform:translateX(-50%) scale(1.04)} }
 
-  /* Palms (SVG) */
-  .palms{
-    position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.25; mix-blend-mode:screen;
-  }
+  /* Palms */
+  .palms{ position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.22; mix-blend-mode:screen; }
 
-  /* Stars/particles canvas */
-  canvas#fx{ position:fixed; inset:0; z-index:0; opacity:.45; }
+  /* Particles */
+  canvas#fx{ position:fixed; inset:0; z-index:0; opacity:.40; }
 
   /* Content */
   .wrap{position:relative; z-index:2; text-align:center; max-width:960px; width:100%;}
   .meta{letter-spacing:.16em; text-transform:uppercase; font-size:12px; color:var(--muted); margin-bottom:18px;}
   h1{
-    margin:0 0 20px; font-size: clamp(40px, 9vw, 120px); font-weight:900; letter-spacing:.01em;
+    margin:0 0 18px; font-size: clamp(32px, 6.8vw, 84px); font-weight:900; letter-spacing:.01em;
     text-shadow: 0 8px 40px rgba(0,0,0,.45);
   }
-  .timer{ display:inline-grid; grid-template-columns:repeat(4, minmax(110px,1fr)); gap:14px; margin:10px 0 12px;}
-  .box{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:20px; padding:18px 16px; min-width:110px; backdrop-filter:blur(6px) saturate(120%);}
+  .headline span{ position:relative; display:inline-block; padding:.04em .02em; }
+  .headline .is-e{ cursor:pointer; }
+  .headline .is-e::after{
+    content:''; position:absolute; left:0; right:0; bottom:-3px; height:2px;
+    background:linear-gradient(90deg,#fff0, #34d399, #fff0); opacity:.0; transition:opacity .2s;
+  }
+  .headline .is-e:hover::after{ opacity:.9; }
+
+  .timer{ display:inline-grid; grid-template-columns:repeat(4, minmax(110px,1fr)); gap:14px; margin:12px 0 14px;}
+  .box{ background:var(--glass); border:1px solid rgba(255,255,255,.15); border-radius:20px; padding:18px 16px; min-width:110px; backdrop-filter:blur(6px) saturate(120%);}
   .num{ font-size: clamp(28px, 5.2vw, 54px); font-weight:800; line-height:1; }
   .lab{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#dbeafecc; }
 
-  .tagline{ margin-top:8px; color:#e2e8f0cc; }
-  .controls{ margin-top:18px; font-size:13px; color:#d1d5db; }
+  .tagline{ margin-top:6px; color:#e2e8f0cc; }
+  .controls{ margin-top:16px; font-size:13px; color:#d1d5db; }
   .btn{
     margin-left:8px; border:1px solid rgba(255,255,255,.25); color:var(--fg); background:transparent;
     padding:8px 14px; border-radius:999px; cursor:pointer;
   }
   .btn:hover{ border-color:#fff }
+
+  /* Sticker (easter egg) */
+  .sticker{
+    position:fixed; z-index:10; transform:translate(-50%,-50%) scale(.92);
+    max-width:min(42vmin, 340px); pointer-events:auto; border-radius:18px;
+    box-shadow:0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.22) inset;
+    display:none;
+  }
+  .sticker.show{ display:block; animation:pop .22s ease-out both; }
+  @keyframes pop{ from{transform:translate(-50%,-50%) scale(.7); opacity:.0} to{transform:translate(-50%,-50%) scale(1); opacity:1} }
+  .sticker .close{
+    position:absolute; top:6px; right:6px; background:rgba(0,0,0,.55); color:#fff; border:0; border-radius:999px; width:30px; height:30px; cursor:pointer;
+  }
+
   @media (max-width:560px){ .timer{grid-template-columns:repeat(2, minmax(120px,1fr));} }
 </style>
 </head>
@@ -83,7 +103,9 @@
   <main class="scene">
     <div class="wrap">
       <div class="meta">BARCELONA — 22·11·2025 — 12:00</div>
-      <h1>it's coming</h1>
+
+      <!-- Headline with per-letter spans (for Easter egg) -->
+      <h1 class="headline" id="headline"></h1>
 
       <div class="timer" aria-live="polite">
         <div class="box"><div class="num" id="d">–</div><div class="lab">days</div></div>
@@ -92,13 +114,27 @@
         <div class="box"><div class="num" id="s">–</div><div class="lab">sec</div></div>
       </div>
 
-      <div class="tagline">Vermut with friends. Bring your good vibes.</div>
+      <div class="tagline">Stay tuned.</div>
       <div class="controls">Music: <button class="btn" id="play">Play</button> <button class="btn" id="stop">Stop</button></div>
     </div>
   </main>
 
+  <!-- Easter egg sticker -->
+  <div id="sticker" class="sticker">
+    <button class="close" aria-label="close">×</button>
+    <img src="./eu.png" alt="Eu" style="display:block; width:100%; border-radius:18px;">
+  </div>
+
 <script>
-  // ==== Countdown (CET, UTC+1) ====
+  // ===== Headline with clickable E/e =====
+  const HEADLINE_TEXT = "Autumn · Barcelona · Eu’s 35";
+  const hl = document.getElementById('headline');
+  hl.innerHTML = [...HEADLINE_TEXT].map(ch=>{
+    const isE = /e/i.test(ch);
+    return `<span class="${isE?'is-e':''}" data-ch="${ch}">${ch === ' ' ? '&nbsp;' : ch}</span>`;
+  }).join('');
+
+  // ===== Countdown (CET, UTC+1) =====
   const target = new Date("2025-11-22T12:00:00+01:00").getTime();
   const $ = (id) => document.getElementById(id);
   function tick(){
@@ -115,7 +151,7 @@
   }
   tick(); setInterval(tick,1000);
 
-  // ==== Tropical star/particle drift ====
+  // ===== Particles =====
   const cvs = document.getElementById('fx'), ctx = cvs.getContext('2d');
   let W,H,P=[];
   function resize(){ W=cvs.width=innerWidth; H=cvs.height=innerHeight; }
@@ -139,31 +175,25 @@
     requestAnimationFrame(loop);
   })();
 
-  // ==== Music: use external track if provided, otherwise generate a tropical loop ====
-  const audioUrl = ""; // <-- If you have a Nickodemus track URL (mp3/https), paste it here.
+  // ===== Music (external MP3 if provided, otherwise tropical loop) =====
+  const audioUrl = "./loop.mp3"; // <--- pon aquí tu archivo si usas otro nombre/ruta
   let ac, master, nodes=[], playing=false, media;
 
   function makePercLoop(){
-    // light conga + shaker loop
-    const tempo = 96; // BPM tropical
-    const spb = 60/tempo;
-    const now = ac.currentTime + 0.1;
-
+    const tempo = 96; const spb = 60/tempo; const now = ac.currentTime + 0.1;
     // shaker
     for(let i=0;i<64;i++){
       const t = now + i*spb/2;
-      const src = ac.createBufferSource();
-      src.buffer = noise(0.03); // short hiss
+      const src = ac.createBufferSource(); src.buffer = noise(0.03);
       const g = ac.createGain(); g.gain.value=0.05;
       const f = ac.createBiquadFilter(); f.type="highpass"; f.frequency.value=4000;
-      src.connect(f).connect(g).connect(master);
-      src.start(t);
+      src.connect(f).connect(g).connect(master); src.start(t);
       nodes.push(src,g,f);
     }
     // conga accents
-    [0,1.5,2,3.5].forEach(barBeat=>{
+    [0,1.5,2,3.5].forEach(bb=>{
       for(let bar=0; bar<16; bar++){
-        const t = now + (bar*4 + barBeat)*spb;
+        const t = now + (bar*4 + bb)*spb;
         const osc = ac.createOscillator(); osc.type="sine"; osc.frequency.value=180;
         const g = ac.createGain(); g.gain.setValueAtTime(0.0, t);
         g.gain.linearRampToValueAtTime(0.12, t+0.005);
@@ -181,30 +211,42 @@
     return n;
   }
 
-  function start(){
+  function startAudio(){
     if(playing) return; playing=true;
     ac = new (window.AudioContext||window.webkitAudioContext)();
     master = ac.createGain(); master.gain.value=0.12; master.connect(ac.destination);
-
     if(audioUrl){
       media = new Audio(audioUrl); media.loop=true; media.crossOrigin="anonymous";
       const src = ac.createMediaElementSource(media); src.connect(master); media.play();
-      nodes.push(src); 
+      nodes.push(src);
     } else {
-      // build our loop
       makePercLoop();
     }
     document.getElementById('play').textContent="Playing";
   }
-  function stop(){
+  function stopAudio(){
     if(!playing) return; playing=false;
     if(media){ media.pause(); media.currentTime=0; media=null; }
-    nodes.forEach(n => { try{ n.stop?.(); }catch{} });
+    nodes.forEach(n=>{ try{ n.stop?.(); }catch{} });
     nodes=[]; master?.disconnect?.(); ac?.close?.();
     document.getElementById('play').textContent="Play";
   }
-  document.getElementById('play').addEventListener('click', start);
-  document.getElementById('stop').addEventListener('click', stop);
+  document.getElementById('play').addEventListener('click', startAudio);
+  document.getElementById('stop').addEventListener('click', stopAudio);
+
+  // ===== Easter egg: tap/click on any E/e in headline shows sticker =====
+  const sticker = document.getElementById('sticker');
+  const closeBtn = sticker.querySelector('.close');
+  hl.querySelectorAll('.is-e').forEach(el=>{
+    el.addEventListener('click', (ev)=>{
+      const x = ev.clientX || innerWidth/2, y = ev.clientY || innerHeight/2;
+      sticker.style.left = x+'px';
+      sticker.style.top  = y+'px';
+      sticker.classList.add('show');
+    }, {passive:true});
+  });
+  closeBtn.addEventListener('click', ()=>sticker.classList.remove('show'));
+  sticker.addEventListener('click', (e)=>{ if(e.target===sticker) sticker.classList.remove('show'); });
 </script>
 </body>
 </html>
